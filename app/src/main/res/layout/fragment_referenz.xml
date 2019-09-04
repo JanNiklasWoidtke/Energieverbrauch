@@ -9,6 +9,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:text="@string/headerReferenz"
+        android:textColor="@color/colorTextOnBackground"
         android:layout_gravity="center"
         android:textSize="24sp"
         android:gravity="center"/>

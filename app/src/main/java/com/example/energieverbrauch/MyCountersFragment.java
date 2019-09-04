@@ -180,6 +180,7 @@ public class MyCountersFragment extends Fragment {
             headerElemente.setPadding(0, 0, 48, 16);
             headerElemente.setGravity(Gravity.CENTER);
             headerElemente.setTypeface(null, Typeface.BOLD);
+            headerElemente.setTextColor(getResources().getColor(R.color.colorTextOnBackground));
             tableRow.addView(headerElemente, i);
 
             if (i == 2) tableLayout.addView(tableRow);
@@ -199,6 +200,7 @@ public class MyCountersFragment extends Fragment {
             zaehlerListe.setLayoutParams(layoutParamsTableRow);
             final String aktuellerZaehlername = zaehlername.get(i);
             zaehlerListe.setText(aktuellerZaehlername);
+            zaehlerListe.setTextColor(getResources().getColor(R.color.colorTextOnBackground));
             zaehlerListe.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 
             // 2. Spalte befüllen: Aktueller Stand bearbeitbar
@@ -211,6 +213,7 @@ public class MyCountersFragment extends Fragment {
             else aktuellerStandListe.setText(String.valueOf(standBeginn.get(i)));
 
             aktuellerStandListe.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            aktuellerStandListe.setTextColor(getResources().getColor(R.color.colorTextOnBackground));
             aktuellerStandListe.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             aktuellerStandListe.setGravity(Gravity.END);
 
@@ -222,6 +225,7 @@ public class MyCountersFragment extends Fragment {
             anteilVerbrauch.setLayoutParams(layoutParamsTableRow);
             if (anteilJedesZaehlers.size() > i) {
                 anteilVerbrauch.setText(String.format("%.1f", anteilJedesZaehlers.get(i) * 100) + "%");
+                anteilVerbrauch.setTextColor(getResources().getColor(R.color.colorTextOnBackground));
                 anteilVerbrauch.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                 anteilVerbrauch.setGravity(Gravity.END);
             }
