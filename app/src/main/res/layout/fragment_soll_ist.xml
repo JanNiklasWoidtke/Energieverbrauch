@@ -11,6 +11,7 @@
         android:layout_weight="1"
         android:layout_marginTop="50dp"
         android:text="@string/headerMyConsumptionSollIst1"
+        android:textColor="@color/colorTextOnBackground"
         android:textSize="24sp"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"/>
@@ -20,6 +21,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:text="@string/headerMyConsumptionSollIst2"
+        android:textColor="@color/colorTextOnBackground"
         android:textSize="24sp"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"/>

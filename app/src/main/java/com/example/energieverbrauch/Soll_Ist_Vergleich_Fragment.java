@@ -80,7 +80,7 @@ public class Soll_Ist_Vergleich_Fragment extends Fragment {
         }
 
         BarDataSet barDataSetMaxVerbrauch = new BarDataSet(entriesBarMaxVerbrauch, null);
-        barDataSetMaxVerbrauch.setColor(Color.BLACK);
+        barDataSetMaxVerbrauch.setColor(Color.GRAY);
         barDataSetMaxVerbrauch.setDrawValues(false);
 
         //Data-Sets der Bardata hinzufügen und formatieren

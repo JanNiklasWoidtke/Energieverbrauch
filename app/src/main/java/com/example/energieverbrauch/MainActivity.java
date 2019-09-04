@@ -1,5 +1,6 @@
 package com.example.energieverbrauch;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     int anfangsMonatDiagramme = 0;
     int tagDerLetzenStandAenderung = 0;
     int aktuellerTagImJahr = 0;
+    boolean darkModeWechsel = false;
 
     float maxVerbrauch = 0;
     int anzahlZaehler = 0;
@@ -99,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         StartFragmentAlt = new StartFragmentAlt();
 
         super.onCreate(savedInstanceState);
+
+        setMode();
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -125,11 +131,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (savedInstanceState == null) { //only switch to Start if app is started initially. Rotating the screen wont cause jumping back to start.
+        if (darkModeWechsel == true){
+            bundleDataToSettingsFragFuellen();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, SettingsFragment).commit();
+            navigationView.setCheckedItem(R.id.nav_Settings);
+
+            darkModeWechsel = false;
+            datenSpeichernSettings();
+        }
+
+        else if (savedInstanceState == null) { //only switch to Start if app is started initially. Rotating the screen wont cause jumping back to start.
             bundleDataToStartFragFuellen();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TabContainerFragment).commit();
             navigationView.setCheckedItem(R.id.nav_start);
         }
+
+
        /*
         //Push-Benachrichtigun
 
@@ -300,7 +317,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void setDarkMode() {
         darkModeAktiviert = !darkModeAktiviert;
-        datenSpeichernSettings();
+       // datenSpeichernSettings();
+
+        if(darkModeAktiviert){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            startActivity(new Intent(MainActivity.this, MainActivity.class));
+            darkModeWechsel = true;
+            datenSpeichernSettings();
+            finish();
+        }
+
+        else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            startActivity(new Intent(MainActivity.this, MainActivity.class));
+            darkModeWechsel = true;
+            datenSpeichernSettings();
+            finish();
+        }
+    }
+
+    public void setMode(){
+        datenLadenSettings();
+
+        if(darkModeAktiviert){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+
+        else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
     }
 
     public void setGrundBetrag(float grundBetragSF) {
@@ -467,6 +512,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         editor.putBoolean("darkModeAktiviert", darkModeAktiviert);
 
+        editor.putBoolean("darkModeWechsel", darkModeWechsel);
+
         editor.putFloat("grundBetrag", grundBetrag);
 
         editor.putFloat("preisProEinheit", preisProEinheit);
@@ -482,6 +529,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         benachrichtigungenZulaessig = sharedPreferences.getBoolean("benachrichtigungenZulaessig", true);
 
         darkModeAktiviert = sharedPreferences.getBoolean("darkModeAktiviert", false);
+
+        darkModeWechsel = sharedPreferences.getBoolean("darkModeWechsel", false);
 
         preisProEinheit = sharedPreferences.getFloat("preisProEinheit", 0);
 
