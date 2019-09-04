@@ -1,6 +1,5 @@
 package com.example.energieverbrauch;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -49,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     int tagDerLetzenStandAenderung = 0;
     int aktuellerTagImJahr = 0;
     boolean darkModeWechsel = false;
+    int anfangsTag = 0;
 
     float maxVerbrauch = 0;
     int anzahlZaehler = 0;
@@ -118,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         monatlichesSpeichern();
 */
+
+        anfangsTagAbgleich();
+
         monatsAbgleich();
 
         erstenTagSetzen();
@@ -152,6 +154,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "0");
 */
+    }
+
+    public void anfangsTagAbgleich() {
+        if (anfangsTag == 0) {
+            anfangsTag = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+            SharedPreferences sharedPreferences = getSharedPreferences("shared Preferences", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("anfangsTag", anfangsTag);
+            editor.apply();
+        }
     }
 
     public void erstenTagSetzen() {
@@ -296,6 +308,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         statesToSettingsFrag.putBoolean("darkModeAktiviert", darkModeAktiviert);
         statesToSettingsFrag.putFloat("preisProEinheit", preisProEinheit);
         statesToSettingsFrag.putFloat("grundBetrag", grundBetrag);
+        statesToSettingsFrag.putInt("anzahlPersonen", anzahlPersonen);
 
         SettingsFragment.setArguments(statesToSettingsFrag);
     }
@@ -313,6 +326,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void setPersons(int persons) {
         anzahlPersonen = persons;
+        SharedPreferences sharedPreferences = getSharedPreferences("shared Preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("anzahlPersonen", anzahlPersonen);
+        editor.apply();
     }
 
     public void setDarkMode() {
@@ -674,11 +691,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         datenLadenSettings();
         datenLadenStartFragment();
 
+        SharedPreferences sharedPreferences = getSharedPreferences("shared Preferences", MODE_PRIVATE);
+        sharedPreferences.getInt("anfangsTag", 0);
+
         dataToStartFragJahr.putFloat("gesamtVerbrauchJahr", gesamtVerbrauchJahr);
         dataToStartFragJahr.putFloat("maxVerbrauchJahr", maxVerbrauchJahr);
         dataToStartFragJahr.putFloat("preisProEinheit", preisProEinheit);
         dataToStartFragJahr.putFloat("grundBetrag", grundBetrag);
         dataToStartFragJahr.putFloat("gesamtVerbrauchAktMonat", gesamtVerbrauch);
+        dataToStartFragJahr.putInt("anfangsTag", anfangsTag);
         if (monatlicherGesamtVerbrauch != null) {
             dataToStartFragJahr.putInt("anzahlMonate", monatlicherGesamtVerbrauch.size());
         }
@@ -703,20 +724,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         datenLadenMonat();
         gesamtVerbrauchJahrBerechnen();
 
+        datenLadenSettings();
+
         SharedPreferences sharedPreferences = getSharedPreferences("shared Preferences", MODE_PRIVATE);
 
         dataToDurchschnitt.putFloat("aktuellerStand", gesamtVerbrauchJahr + sharedPreferences.getFloat("gesamtVerbrauch", 0));
         dataToDurchschnitt.putFloat("vorherigerStand", sharedPreferences.getFloat("vorherigerStand", 0));
         dataToDurchschnitt.putInt("aktuellerTagImJahr", sharedPreferences.getInt("aktuellerTagImJahr", 0));
         dataToDurchschnitt.putInt("tagDerLetztenEingabe", sharedPreferences.getInt("tagDerLetztenEingabe", 0));
+        dataToDurchschnitt.putFloat("preisProEinheit", preisProEinheit);
 
         return dataToDurchschnitt;
     }
 
     public Bundle dataToSollIst() {
+        datenLadenSettings(); //mögl. noch andere Settings laden
+
         dataToSollIst.putInt("anfangsMonatDiagramme", anfangsMonatDiagramme);
         dataToSollIst.putFloatArray("monatlicherGesamtVerbrauch", floatArrayListToFloatArray(monatlicherGesamtVerbrauch));
         dataToSollIst.putFloatArray("monatlicherMaxVerbrauch", floatArrayListToFloatArray(monatlicherMaximalVerbrauch));
+        dataToSollIst.putInt("anzahlPersonen", anzahlPersonen);
 
         return dataToSollIst;
     }
